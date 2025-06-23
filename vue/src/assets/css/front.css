@@ -10,7 +10,7 @@
     display: flex;
     height: 60px;
     line-height: 60px;
-    border-bottom: 1px solid #eee;
+    background-color: #824e1c;
 }
 
 .front-header-left {
@@ -27,7 +27,7 @@
 }
 
 .front-header-left .title {
-    color: #333;
+    color: #eee;
     cursor: pointer;
     margin-left: 10px;
     font-size: 20px;
@@ -36,6 +36,8 @@
 
 .front-header-center {
     flex: 1;
+    display: flex;
+    align-items: center;
 }
 
 .front-header-right {
@@ -43,15 +45,30 @@
 }
 
 .main-content {
-    width: 80%;
-    margin: 5px auto;
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px 0;
+    min-height: 100vh;
 }
 
 /*Element-Plus样式覆盖*/
 .el-menu--horizontal {
     border: none !important;
-    height: 59px;
+    height: 60px;
+    background-color: #824e1c;
 }
 .el-tooltip__trigger {
     outline: none;
+}
+.el-menu--horizontal .is-active {
+    background-color: #653101 !important;
+    color: #ffba00 !important;
+}
+.el-menu-item {
+    color: #eee;
+    border: none !important;
+}
+.el-menu-item:not(.is-active):hover {
+    background-color: #824e1c;
+    color: #ffba00;
 }

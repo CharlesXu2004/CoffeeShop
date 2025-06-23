@@ -34,6 +34,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version> <!-- 注意查看最新的 Lombok 版本，并替换此处的版本号 -->
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.25</version>

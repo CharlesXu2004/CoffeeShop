@@ -36,29 +36,31 @@
                     </el-form-item>
                     
                     <el-form-item label="配料份数：" class="form-item-custom">
-                        <el-input-number 
+                        <el-input 
                             v-model="data.additiveNum" 
                             :min="1" 
                             :max="20"
                             controls-position="right"
-                            class="custom-number-input"
+                            class="custom-input"
                         />
                     </el-form-item>
                 </div>
+
                 
-                <el-form-item class="button-group">
+                <div class="button-group">
                     <el-button type="primary" @click="submitOrder" class="submit-btn">
-                        <span>✨ 提交订单</span>
+                        <span>✨ 提交订单 </span>
                     </el-button>
                     <el-button @click="resetForm" class="reset-btn">
-                        <span>🔄 重置</span>
+                        <span>🔄 重置订单 </span>
                     </el-button>
-                </el-form-item>
+                </div>
+                
             </el-form>
             
             <div class="divider-custom"></div>
             
-            <div class="order-result" v-if="data.order">
+            <div class="order-result" v-if="data.orderVisible">
                 <div class="result-header">
                     <span class="result-icon">🎉</span>
                     <span class="result-title">订单详情</span>
@@ -91,6 +93,7 @@
         additiveName: '',
         additiveNum: 1,
         order: null,
+        orderVisible: false
     })
 
     // 提交订单
@@ -113,8 +116,8 @@
             }
         }).then(res => {
             if (res.code === '200') {
-                console.log(res.data)
-                // data.order = res.data
+                data.order = res.data
+                data.orderVisible = true
             } 
             else {
                 ElMessage.error(res.msg)
@@ -122,17 +125,14 @@
         })
     }
 
-    // 处理订单
-    const processOrder = () => {
-        // TODO: 实现订单处理逻辑
-    }
-
     // 重置表单
     const resetForm = () => {
         data.beverageName = ''
         data.additiveName = ''
         data.additiveNum = 1
+        data.orderVisible = false
     }
+
 </script>
 
 <style scoped>

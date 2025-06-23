@@ -33,6 +33,7 @@
                                 clearable
                                 class="custom-input"
                                 @input="handleAdditiveInput(index)"
+                                @blur="validateName(index)"
                             >
                             </el-input>
                         </el-form-item>
@@ -153,8 +154,6 @@
 
     const handleAdditiveInput = (index) => {
         const currentAdditive = data.additives[index]
-
-        console.log('当前配料:', currentAdditive);
         
         if (currentAdditive.name.trim() 
             && currentAdditive.num > 0
@@ -171,6 +170,26 @@
             // 当前行变为空行
             newAdditives.push({ name: '', num: null })
             data.additives.splice(0, data.additives.length, ...newAdditives)
+        }
+    }
+
+    const validateName = (index) => {
+        const currentAdditive = data.additives[index]
+
+        // 不能是重复的配料名
+        if (data.additives.filter(a => a.name.trim() === currentAdditive.name.trim()).length > 1) {
+            ElMessage.error('配料名称不能重复')
+            if (index === data.additives.length - 1) {
+                currentAdditive.name = ''
+                currentAdditive.num = null
+            }
+            else {
+                const newAdditives = []
+                for (let i = 0; i < index; i++) newAdditives.push(data.additives[i])
+                // 当前行变为空行
+                newAdditives.push({ name: '', num: null })
+                data.additives.splice(0, data.additives.length, ...newAdditives)
+            }
         }
     }
 

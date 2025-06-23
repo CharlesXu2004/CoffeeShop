@@ -24,26 +24,43 @@
                     </el-input>
                 </el-form-item>
                 
-                <div class="form-inline" style="display: flex; justify-content: space-between;">
-                    <el-form-item label="配料：" class="form-item-custom">
-                        <el-input 
-                            v-model="data.additiveName" 
-                            placeholder="请输入配料名称"
-                            clearable
-                            class="custom-input"
+                <div v-for="(additive, index) in data.additives" :key="index" class="additive-row">
+                    <div class="form-inline" style="display: flex; justify-content: space-between;">
+                        <el-form-item :label="`配料${index + 1}：`" class="form-item-custom">
+                            <el-input 
+                                v-model="additive.name" 
+                                placeholder="请输入配料名称"
+                                clearable
+                                class="custom-input"
+                                @input="handleAdditiveInput(index)"
+                            >
+                            </el-input>
+                        </el-form-item>
+                        
+                        <el-form-item label="份数：" class="form-item-custom">
+                            <el-input 
+                                v-model="additive.num" 
+                                placeholder="请输入配料名称"
+                                clearable
+                                :min="1" 
+                                :max="20"
+                                controls-position="right"
+                                class="custom-input"
+                                @input="handleAdditiveInput(index)"
+                            />
+                        </el-form-item>
+
+                        <el-button 
+                            v-if="data.additives.length > 1" 
+                            type="danger" 
+                            size="small" 
+                            @click="removeAdditive(index)"
+                            style="margin-left: 10px;"
                         >
-                        </el-input>
-                    </el-form-item>
-                    
-                    <el-form-item label="配料份数：" class="form-item-custom">
-                        <el-input 
-                            v-model="data.additiveNum" 
-                            :min="1" 
-                            :max="20"
-                            controls-position="right"
-                            class="custom-input"
-                        />
-                    </el-form-item>
+                            删除
+                        </el-button>
+
+                    </div>
                 </div>
 
                 
@@ -90,8 +107,9 @@
     // 表单数据
     const data = reactive({
         beverageName: '',
-        additiveName: '',
-        additiveNum: 1,
+        additives: [
+            { name: '', num: null }
+        ],
         order: null,
         orderVisible: false
     })
@@ -131,6 +149,33 @@
         data.additiveName = ''
         data.additiveNum = 1
         data.orderVisible = false
+    }
+
+    const handleAdditiveInput = (index) => {
+        const currentAdditive = data.additives[index]
+
+        console.log('当前配料:', currentAdditive);
+        
+        if (currentAdditive.name.trim() 
+            && currentAdditive.num > 0
+            && index === data.additives.length - 1) {
+            data.additives.push({ name: '', num: null })
+        }
+        
+        // 如果当前配料为空，且不是第一个配料，则删除后面所有空的配料行
+        if (!(currentAdditive.name.trim() && currentAdditive.num > 0) 
+            && index !== data.additives.length - 1) {
+            // 保留之前有内容的行
+            const newAdditives = []
+            for (let i = 0; i < index; i++) newAdditives.push(data.additives[i])
+            // 当前行变为空行
+            newAdditives.push({ name: '', num: null })
+            data.additives.splice(0, data.additives.length, ...newAdditives)
+        }
+    }
+
+    const removeAdditive = (index) => {
+        data.additives.splice(index, 1)
     }
 
 </script>

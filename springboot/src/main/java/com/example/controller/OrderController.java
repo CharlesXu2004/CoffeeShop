@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.common.Result;
 import com.example.entity.Order;
 import com.example.service.OrderService;
+import com.example.entity.OrderRequest;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +20,9 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
-    @GetMapping("/processOrder")
-    public Result processOrder(@RequestParam String beverageName, 
-                               @RequestParam String additiveName,
-                               @RequestParam Integer additiveNum) {
-        Order order = orderService.processOrder(beverageName, additiveName, additiveNum);
+    @PostMapping("/processOrder")
+    public Result processOrder(@RequestBody OrderRequest orderRequest) {
+        Order order = orderService.processOrder(orderRequest);
         return Result.success(order);
     }
 

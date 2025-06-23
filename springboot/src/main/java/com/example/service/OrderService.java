@@ -5,13 +5,18 @@ import com.example.additive.NoAdditive;
 import com.example.beverage.NoBeverage;
 import com.example.beverage.Beverage;
 import com.example.entity.Order;
+import com.example.entity.OrderAdditive;
 import com.example.factory.AdditiveFactory;
 import com.example.factory.BeverageFactory;
 import com.example.mapper.OrderMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
+import com.example.entity.OrderRequest;
+import com.example.entity.OrderAdditive;
 
 import java.util.List;
 import java.util.Base64.Decoder;
@@ -20,6 +25,7 @@ import java.util.Base64.Decoder;
  * 业务层方法
  */
 @Service
+@Slf4j
 public class OrderService {
 
     @Resource
@@ -63,10 +69,12 @@ public class OrderService {
         return PageInfo.of(list);
     }
 
-    public Order processOrder(String beverageName, String additiveName, Integer additiveNum) {
+    public Order processOrder(OrderRequest orderRequest) {
 
         String description;
         Double cost;
+
+        String beverageName = orderRequest.getBeverageName();
 
         Beverage beverage = beverageFactory.getBeverage(beverageName);
         description = beverage.getDescription();
@@ -74,15 +82,16 @@ public class OrderService {
 
         if (!(beverage instanceof NoBeverage)){
 
-            beverage = additiveFactory.getAdditive(additiveName, beverage);
-            description = beverage.getDescription();
-            cost = beverage.getCost();
+            for (OrderAdditive additive : orderRequest.getAdditives()) {
+                String additiveName = additive.getName();
+                Integer additiveNum = additive.getNum();
 
-            if (!(beverage instanceof NoAdditive)) {
-                description += String.format(" %d份", additiveNum);
-                for (int i = 1; i < additiveNum; i++) beverage = additiveFactory.getAdditive(additiveName, beverage);
+                beverage = additiveFactory.getAdditive(additiveName, beverage, additiveNum);
+                description = beverage.getDescription();
                 cost = beverage.getCost();
-            } 
+
+                if (beverage instanceof NoAdditive) break;
+            }
 
         }
 

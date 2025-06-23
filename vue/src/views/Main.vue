@@ -16,7 +16,7 @@
             <el-form :model="data" class="order-form">
                 <el-form-item label="饮品：" class="form-item-custom">
                     <el-input 
-                        v-model="data.beverageName" 
+                        v-model="data.json.beverageName" 
                         placeholder="请输入饮品名称"
                         clearable
                         class="custom-input"
@@ -24,7 +24,7 @@
                     </el-input>
                 </el-form-item>
                 
-                <div v-for="(additive, index) in data.additives" :key="index" class="additive-row">
+                <div v-for="(additive, index) in data.json.additives" :key="index" class="additive-row">
                     <div class="form-inline" style="display: flex; justify-content: space-between;">
                         <el-form-item :label="`配料${index + 1}：`" class="form-item-custom">
                             <el-input 
@@ -52,7 +52,7 @@
                         </el-form-item>
 
                         <el-button 
-                            v-if="data.additives.length > 1" 
+                            v-if="data.json.additives.length > 1" 
                             type="danger" 
                             size="small" 
                             @click="removeAdditive(index)"
@@ -78,7 +78,7 @@
             
             <div class="divider-custom"></div>
             
-            <div class="order-result" v-if="data.orderVisible">
+            <div class="order-result" v-if="data.order">
                 <div class="result-header">
                     <span class="result-icon">🎉</span>
                     <span class="result-title">订单详情</span>
@@ -107,94 +107,95 @@
 
     // 表单数据
     const data = reactive({
-        beverageName: '',
-        additives: [
-            { name: '', num: null }
-        ],
-        order: null,
-        orderVisible: false
+        json : {
+            "beverageName": '',
+            "additives": [
+                { "name": '', "num": null }
+            ],
+        },
+        order: null
     })
 
     // 提交订单
     const submitOrder = () => {
+
         // 验证表单
-        if (!data.beverageName.trim()) {
-            ElMessage.warning('请输入饮料名称')
+        if (data.json.additives.length - 1 === 0) {
+            ElMessage.warning('请至少添加一个配料')
             return
         }
-        
-        if (!data.additiveName.trim()) {
-            ElMessage.warning('请输入配料名称')
-            return
-        }
-        request.get('/order/processOrder', {
-            params: {
-                beverageName: data.beverageName,
-                additiveName: data.additiveName,
-                additiveNum: data.additiveNum
-            }
-        }).then(res => {
+
+        // 留存最后一个之前的 additives
+        const lastAdditive = data.json.additives[data.json.additives.length - 1]
+        data.json.additives.pop()
+
+        request.post('/order/processOrder', data.json).then(res => {
             if (res.code === '200') {
                 data.order = res.data
-                data.orderVisible = true
             } 
             else {
                 ElMessage.error(res.msg)
             }
         })
+
+        // 恢复最后一个配料行
+        data.json.additives.push(lastAdditive)
     }
 
     // 重置表单
     const resetForm = () => {
-        data.beverageName = ''
-        data.additiveName = ''
-        data.additiveNum = 1
-        data.orderVisible = false
+        data.json = {
+            "beverageName": '',
+            "additives": [
+                { "name": '', "num": null }
+            ],
+        }
+        data.order = null
     }
 
     const handleAdditiveInput = (index) => {
-        const currentAdditive = data.additives[index]
+        const currentAdditive = data.json.additives[index]
         
         if (currentAdditive.name.trim() 
             && currentAdditive.num > 0
-            && index === data.additives.length - 1) {
-            data.additives.push({ name: '', num: null })
+            && index === data.json.additives.length - 1) {
+            data.json.additives.push({ name: '', num: null })
         }
         
         // 如果当前配料为空，且不是第一个配料，则删除后面所有空的配料行
         if (!(currentAdditive.name.trim() && currentAdditive.num > 0) 
-            && index !== data.additives.length - 1) {
+            && index !== data.json.additives.length - 1) {
             // 保留之前有内容的行
             const newAdditives = []
-            for (let i = 0; i < index; i++) newAdditives.push(data.additives[i])
+            for (let i = 0; i < index; i++) newAdditives.push(data.json.additives[i])
             // 当前行变为空行
             newAdditives.push({ name: '', num: null })
-            data.additives.splice(0, data.additives.length, ...newAdditives)
+            data.json.additives.splice(0, data.json.additives.length, ...newAdditives)
         }
     }
 
     const validateName = (index) => {
-        const currentAdditive = data.additives[index]
+        const currentAdditive = data.json.additives[index]
 
         // 不能是重复的配料名
-        if (data.additives.filter(a => a.name.trim() === currentAdditive.name.trim()).length > 1) {
+        if (data.json.additives.filter(a => a.name.trim() === currentAdditive.name.trim()).length > 1) {
             ElMessage.error('配料名称不能重复')
-            if (index === data.additives.length - 1) {
+            if (index === data.json.additives.length - 1) {
                 currentAdditive.name = ''
                 currentAdditive.num = null
             }
             else {
                 const newAdditives = []
-                for (let i = 0; i < index; i++) newAdditives.push(data.additives[i])
+                for (let i = 0; i < index; i++) newAdditives.push(data.json.additives[i])
                 // 当前行变为空行
                 newAdditives.push({ name: '', num: null })
-                data.additives.splice(0, data.additives.length, ...newAdditives)
+                data.json.additives.splice(0, data.json.additives.length, ...newAdditives)
             }
         }
     }
 
     const removeAdditive = (index) => {
-        data.additives.splice(index, 1)
+        data.json.additives.splice(index, 1)
     }
 
 </script>

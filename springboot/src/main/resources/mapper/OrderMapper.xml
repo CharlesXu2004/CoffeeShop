@@ -6,15 +6,10 @@
     <select id="selectAll" resultType="com.example.entity.Order">
         select * from `order`
         <where>
-            <if test="title != null"> and title like concat('%', #{title}, '%')</if>
+            <if test="cost != null"> and cost != 0</if>
         </where>
-        order by id desc
+        order by id asc
     </select>
-
-    <delete id="deleteById">
-        delete from `order`
-        where id = #{id}
-    </delete>
 
     <insert id="insert" parameterType="com.example.entity.Order" useGeneratedKeys="true">
         insert into `order`
@@ -29,21 +24,5 @@
             <if test="goodsDetail != null">#{goodsDetail},</if>
         </trim>
     </insert>
-
-    <update id="updateById" parameterType="com.example.entity.Order">
-        update `order`
-        <set>
-            <if test="title != null">
-                title = #{title},
-            </if>
-            <if test="content != null">
-                content = #{content},
-            </if>
-            <if test="time != null">
-                time = #{time},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
 
 </mapper>

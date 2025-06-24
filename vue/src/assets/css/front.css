@@ -10,7 +10,7 @@
     display: flex;
     height: 60px;
     line-height: 60px;
-    background-color: #824e1c;
+    background-color: #1c4182;
 }
 
 .front-header-left {
@@ -51,11 +51,16 @@
     min-height: 100vh;
 }
 
+.front-header-item {
+    color: #eee;
+    border: none !important;
+}
+
 /*Element-Plus样式覆盖*/
 .el-menu--horizontal {
     border: none !important;
     height: 60px;
-    background-color: #824e1c;
+    background-color: #1c4182;
 }
 .el-tooltip__trigger {
     outline: none;
@@ -69,6 +74,6 @@
     border: none !important;
 }
 .el-menu-item:not(.is-active):hover {
-    background-color: #824e1c;
+    background-color: #1c4182;
     color: #ffba00;
 }

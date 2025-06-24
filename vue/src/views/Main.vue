@@ -1,18 +1,58 @@
 <template>
+
+    <div class="front-header">
+            <div class="front-header-left">
+                <img src="@/assets/imgs/drink.png" alt="">
+                <div class="title">售货机</div>
+            </div>
+            <div class="front-header-center">
+                <div style="flex: 1">
+                    <el-menu router mode="horizontal">
+                        <el-menu-item style="color: #eee; border: none ;" @click="comingSoon">首页</el-menu-item>
+                        <el-menu-item style="color: #eee; border: none ;" @click="handleOrderClick">点单界面</el-menu-item>
+                        <el-menu-item style="color: #eee; border: none ;" @click="handleHistoryClick">我的订单</el-menu-item>
+                        <el-menu-item style="color: #eee; border: none ;" @click="comingSoon">积分商城</el-menu-item>
+                        <el-menu-item style="color: #eee; border: none ;" @click="comingSoon">积分明细</el-menu-item>
+                    </el-menu>
+                </div>
+                <div style="width: 300px; margin-right: 100px">
+                    <el-input clearable prefix-icon="Search" v-model="data.searchData" placeholder="搜索您想喝的"></el-input>
+                </div>
+            </div>
+
+            <div class="front-header-right">
+                <div>
+                    <el-dropdown style="cursor: pointer; height: 60px">
+                        <div style="display: flex; align-items: center; color: #eee">
+                            <img style="width: 40px; height: 40px; border-radius: 50%;" src="@/assets/imgs/avatar.png" alt="">
+                        </div>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <!-- <el-dropdown-item >我的地址</el-dropdown-item> -->
+                                <!-- <el-dropdown-item >我的收藏</el-dropdown-item> -->
+                                <!-- <el-dropdown-item >充值记录</el-dropdown-item> -->
+                                <el-dropdown-item @click="comingSoon">个人信息</el-dropdown-item>
+                                <!-- <el-dropdown-item >修改密码</el-dropdown-item> -->
+                                <!-- <el-dropdown-item >退出登录</el-dropdown-item> -->
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </div>
+            </div>
+        </div>
+    
     <div class="beverage-order">
+
         <div class="background-decoration">
             <div class="floating-circle circle-1"></div>
             <div class="floating-circle circle-2"></div>
         </div>
         
-        <el-card class="order-card">
+        <el-card class="order-card" style="margin-top: 20px;" v-if="data.orderVisible">
             
-            <template #header>
-                <div class="card-header">
-                    <img src="@/assets/imgs/drink.png" alt="" style="width: 50px; height: 50px; position: relative;">
-                    <span class="header-text">售货机</span>
-                </div>
-            </template>
+            <div style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: center; ">
+                <span class="header-text">点单界面</span>
+            </div>
             
             <el-form :model="data" class="order-form">
                 <el-form-item label="饮品：" class="form-item-custom">
@@ -121,7 +161,39 @@
                 </div>
             </div>
         </el-card>
+
+        <el-card class="order-card" style="margin-top: 20px;" v-if="data.historyVisible">
+
+            <div style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: center; ">
+                <span class="header-text">我的订单</span>
+            </div>
+
+            <el-table :data="data.historyData" style="width: 100%">
+                <el-table-column label="订单号" align="center">
+                    <template #default="scope">
+                        <span>{{ scope.row.id }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="订单描述" align="center">
+                    <template #default="scope">
+                        <span>{{ scope.row.description }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="金额" align="center">
+                    <template #default="scope">
+                        <span>¥ {{ scope.row.cost }}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div v-if="data.historyPageInfo.total" style="margin-top: 20px; justify-content: center; display: flex;">
+                <el-pagination @current-change="loadHistory" layout="total, prev, pager, next, jumper" :page-size="data.historyPageInfo.pageSize" v-model:current-page="data.historyPageInfo.pageNum" :total="data.historyPageInfo.total" :background="background"/>
+            </div>
+
+        </el-card>
+
     </div>
+
 </template>
 
 <script setup>
@@ -139,8 +211,50 @@
                 { "name": '', "num": null }
             ]
         },
-        order: null
+        order: null,
+        orderVisible: true,
+        historyVisible: false,
+        historyData: null,
+        historyPageInfo: {
+            pageNum: 1,
+            pageSize: 10,
+            total: 0
+        },
+        searchData: null
     })
+
+
+    const handleOrderClick = () => {
+        data.orderVisible = true
+        data.historyVisible = false
+    }
+
+    const handleHistoryClick = () => {
+        data.orderVisible = false
+        data.historyVisible = true
+        loadHistory(data.historyPageInfo.pageNum)
+    }
+
+    const loadHistory = (pageNum) => {
+        request.get('/order/selectPage', {
+            params: {
+                pageNum: pageNum,
+                pageSize: data.historyPageInfo.pageSize
+            }
+        }).then(res => {
+            if (res.code === '200') {
+                data.historyData = res.data.list
+                data.historyPageInfo.total = res.data.total
+            } 
+            else {
+                ElMessage.error(res.msg)
+            }
+        })
+    }
+
+    const comingSoon = () => {
+        ElMessage.warning('暂未开放')
+    }
 
     // 提交订单
     const submitOrder = () => {
@@ -267,6 +381,7 @@
 <style scoped>
 
     @import "@/assets/css/main.css";
+    @import "@/assets/css/front.css";
 
 
 </style>

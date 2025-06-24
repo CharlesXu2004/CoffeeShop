@@ -55,121 +55,160 @@
             <div class="floating-circle circle-2"></div>
         </div>
         
-        <el-card class="order-card" style="margin-top: 20px;" v-if="data.orderVisible">
-            
-            <div style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: center; ">
-                <span class="header-text">点单界面</span>
-            </div>
-            
-            <el-form :model="data" class="order-form">
-                <el-form-item label="饮品：" class="form-item-custom">
-                    <el-input 
-                        v-model="data.json.beverageName" 
-                        placeholder="请输入饮品名称"
-                        clearable
-                        class="custom-input"
-                    >
-                    </el-input>
-                </el-form-item>
-                
-                <div v-for="(additive, index) in data.json.additives" :key="index" class="additive-row">
-                    <div class="form-inline" style="display: flex; justify-content: space-between;">
-                        <el-form-item :label="`配料${index + 1}：`" class="form-item-custom">
-                            <el-input 
-                                v-model="additive.name" 
-                                placeholder="请输入配料名称"
-                                clearable
-                                class="custom-input"
-                                @input="handleAdditiveInput(index)"
-                                @blur="validateName(index)"
-                            >
-                            </el-input>
-                        </el-form-item>
-                        
-                        <el-form-item label="份数：" class="form-item-custom">
-                            <el-input 
-                                v-model="additive.num" 
-                                placeholder="请输入配料名称"
-                                clearable
-                                :min="1" 
-                                :max="20"
-                                controls-position="right"
-                                class="custom-input"
-                                @input="handleAdditiveInput(index)"
-                            />
-                        </el-form-item>
+        <div style="width: 50%; margin: 0 auto; display: flex;">
 
-                        <el-button 
-                            v-if="data.json.additives.length > 1" 
-                            type="danger" 
-                            size="small" 
-                            @click="removeAdditive(index)"
-                            style="margin-left: 10px;"
+            <el-card class="order-card" style="margin-top: 20px;" v-if="data.orderVisible">
+                
+                <div style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: center; ">
+                    <span class="header-text">点单界面</span>
+                </div>
+                
+                <el-form :model="data" class="order-form">
+                    <el-form-item label="饮品:" class="form-item-custom">
+                        <el-input 
+                            v-model="data.json.beverageName" 
+                            placeholder="请输入饮品名称"
+                            clearable
+                            class="custom-input"
                         >
-                            删除
+                        </el-input>
+                    </el-form-item>
+                    
+                    <div v-for="(additive, index) in data.json.additives" :key="index" class="additive-row">
+                        <div class="form-inline" style="display: flex; justify-content: space-between;">
+                            <el-form-item :label="`配料${index + 1}:`" class="form-item-custom">
+                                <el-input 
+                                    v-model="additive.name" 
+                                    placeholder="请输入配料名称"
+                                    clearable
+                                    class="custom-input"
+                                    @input="handleAdditiveInput(index)"
+                                    @blur="validateName(index)"
+                                >
+                                </el-input>
+                            </el-form-item>
+                            
+                            <el-form-item label="份数:" class="form-item-custom" style="margin-left: 15px;">
+                                <el-input 
+                                    v-model="additive.num" 
+                                    placeholder="请输入配料名称"
+                                    clearable
+                                    :min="1" 
+                                    :max="20"
+                                    controls-position="right"
+                                    class="custom-input"
+                                    @input="handleAdditiveInput(index)"
+                                />
+                            </el-form-item>
+
+                            <el-button 
+                                v-if="data.json.additives.length > 1" 
+                                type="danger" 
+                                size="small" 
+                                @click="removeAdditive(index)"
+                                style="margin-left: 10px;"
+                            >
+                                删除
+                            </el-button>
+
+                        </div>
+                    </div>
+
+                    
+                    <div class="button-group">
+                        <el-button type="primary" @click="submitOrder" class="submit-btn">
+                            <span>✨ 提交订单 </span>
                         </el-button>
-
+                        <el-button @click="resetForm" class="reset-btn">
+                            <span>🔄 重置订单 </span>
+                        </el-button>
                     </div>
-                </div>
-
+                    
+                </el-form>
                 
-                <div class="button-group">
-                    <el-button type="primary" @click="submitOrder" class="submit-btn">
-                        <span>✨ 提交订单 </span>
-                    </el-button>
-                    <el-button @click="resetForm" class="reset-btn">
-                        <span>🔄 重置订单 </span>
-                    </el-button>
-                </div>
+                <div class="horizontal-divider"></div>
                 
-            </el-form>
-            
-            <div class="horizontal-divider"></div>
-            
-            <div class="order-result" v-if="data.order">
-                <div class="result-header">
-                    <span class="result-icon">📋</span>
-                    <span class="result-title">订单详情</span>
-                </div>
-                <div class="result-content">
-
-                    <div class="result-item">
-                        <span class="label">您所点的是：</span>
-                        <span class="value description">{{ data.order.description }}</span>
+                <div class="order-result" v-if="data.order">
+                    <div class="result-header">
+                        <span class="result-icon">📋</span>
+                        <span class="result-title">订单详情</span>
                     </div>
+                    <div class="result-content">
 
-                    <el-table :data="data.order.goods" style="width: 100%" show-summary :summary-method="getSummaries">
-                        <el-table-column label="商品名称" align="center">
-                            <template #default="scope">
-                                <span class="item-name">{{ scope.row.name }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="单价" align="center">
-                            <template #default="scope">
-                                <span class="price-text">¥ {{ scope.row.price }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="数量" align="center">
-                            <template #default="scope">
-                                <span class="quantity-text">{{ scope.row.num }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="小计" align="center">
-                            <template #default="scope">
-                                <span class="subtotal-text">¥ {{ scope.row.price * scope.row.num }}</span>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+                        <div class="result-item">
+                            <span class="label">您所点的是：</span>
+                            <span class="value description">{{ data.order.description }}</span>
+                        </div>
 
-                    <div class="result-item price-item" >
-                        <span class="label">总计价格是：</span>
-                        <span class="value price">¥ {{ data.order.cost }}</span>
+                        <el-table :data="data.order.goods" style="width: 100%" show-summary :summary-method="getSummaries">
+                            <el-table-column label="商品名称" align="center">
+                                <template #default="scope">
+                                    <span class="item-name">{{ scope.row.name }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="单价" align="center">
+                                <template #default="scope">
+                                    <span class="price-text">¥ {{ scope.row.price }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="数量" align="center">
+                                <template #default="scope">
+                                    <span class="quantity-text">{{ scope.row.num }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="小计" align="center">
+                                <template #default="scope">
+                                    <span class="subtotal-text">¥ {{ scope.row.price * scope.row.num }}</span>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+
+                        <div class="result-item price-item" >
+                            <span class="label">总计价格是：</span>
+                            <span class="value price">¥ {{ data.order.cost }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </el-card>
+            </el-card>
 
-        <el-card class="order-card" style="margin-top: 20px;" v-if="data.historyVisible">
+            <el-card class="order-card" style="margin-top: 20px; flex-direction: column; flex: 1; max-width: 20%; height: 300px; margin-left: 0%;" v-if="data.orderVisible">
+
+                <div style="margin-top: 5px; margin-bottom: 10px; display: flex; justify-content: center; ">
+                    <span class="subheader-text">可选饮料</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-left: 15px; margin-right: 15px;">
+                    <div>
+                        <div class="drink-icon">🥤</div>
+                        <div class="drink-name">coca</div>
+                        <div class="drink-price">¥ 3.00</div>
+                    </div>
+                    <div class="drink-info">
+                        <div class="drink-icon">☕</div>
+                        <div class="drink-name">coffee</div>
+                        <div class="drink-price">¥ 9.90</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; margin-bottom: 10px; display: flex; justify-content: center; ">
+                    <span class="subheader-text">可选配料</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-left: 15px; margin-right: 15px;">
+                    <div>
+                        <div class="drink-icon">🧊</div>
+                        <div class="drink-name">ice</div>
+                        <div class="drink-price">¥ 0.50</div>
+                    </div>
+                    <div class="drink-info">
+                        <div class="drink-icon">🥛</div>
+                        <div class="drink-name">milk</div>
+                        <div class="drink-price">¥ 1.00</div>
+                    </div>
+                </div>
+            </el-card>
+
+        </div>
+
+        <el-card class="order-card" style="margin-top: 20px; width: 60%;" v-if="data.historyVisible">
 
             <div style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: center; ">
                 <span class="header-text">我的订单</span>
@@ -265,12 +304,6 @@
 
     // 提交订单
     const submitOrder = () => {
-
-        // 验证表单
-        if (data.json.additives.length - 1 === 0) {
-            ElMessage.warning('请至少添加一个配料')
-            return
-        }
 
         // 留存最后一个之前的 additives
         const lastAdditive = data.json.additives[data.json.additives.length - 1]
@@ -423,6 +456,27 @@
         position: absolute;
         background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
         pointer-events: none;
+    }
+
+    .drink-icon {
+        display: flex;
+        justify-content: center;
+        font-size: 1.5em;
+    }
+
+    .drink-name {
+        display: flex;
+        justify-content: center;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .drink-price {
+        display: flex;
+        justify-content: center;
+        color: #667eea;
+        font-weight: bold;
+        font-size: 0.9em;
     }
 
 </style>

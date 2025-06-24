@@ -3,16 +3,23 @@
     <div class="front-header">
             <div class="front-header-left">
                 <img src="@/assets/imgs/drink.png" alt="">
-                <div class="title">售货机</div>
+                <div class="title">自助售货机</div>
             </div>
             <div class="front-header-center">
                 <div style="flex: 1">
                     <el-menu router mode="horizontal">
-                        <el-menu-item style="color: #eee; border: none ;" @click="comingSoon">首页</el-menu-item>
-                        <el-menu-item style="color: #eee; border: none ;" @click="handleOrderClick">点单界面</el-menu-item>
-                        <el-menu-item style="color: #eee; border: none ;" @click="handleHistoryClick">我的订单</el-menu-item>
-                        <el-menu-item style="color: #eee; border: none ;" @click="comingSoon">积分商城</el-menu-item>
-                        <el-menu-item style="color: #eee; border: none ;" @click="comingSoon">积分明细</el-menu-item>
+                        <el-menu-item class="navBar" @click="comingSoon">
+                            🏠首页
+                        </el-menu-item>
+                        <el-menu-item class="navBar" @click="handleOrderClick">
+                            📝点单界面
+                        </el-menu-item>
+                        <el-menu-item class="navBar" @click="handleHistoryClick">
+                            📋我的订单
+                        </el-menu-item>
+                        <el-menu-item class="navBar" @click="comingSoon">
+                            🎁积分商城
+                        </el-menu-item>
                     </el-menu>
                 </div>
                 <div style="width: 300px; margin-right: 100px">
@@ -383,5 +390,39 @@
     @import "@/assets/css/main.css";
     @import "@/assets/css/front.css";
 
+    /* 导航栏项目基础样式 */
+    .navBar {
+        color: #e8eaed ;
+        border: none ;
+        background: transparent ;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .navBar:hover {
+        background: rgb(255, 255, 255) ;
+        color: #ffffff ;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .navBar.is-active {
+        background: linear-gradient(45deg, #ffd700, #ffed4e);
+        color: #ffffff ;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); 
+        transform: translateY(-1px);
+    }
+
+    .navBar.is-active::before {
+        content: '';
+        position: absolute;
+        background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+        pointer-events: none;
+    }
 
 </style>

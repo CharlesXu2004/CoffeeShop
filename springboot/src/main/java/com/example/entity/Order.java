@@ -1,5 +1,4 @@
 package com.example.entity;
-
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,4 +10,6 @@ public class Order {
     private String description;
     private Double cost;
     private List<OrderAdditive> goods = new ArrayList<>();
+
+    private String goodsDetail;
 }

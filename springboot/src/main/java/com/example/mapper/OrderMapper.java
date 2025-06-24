@@ -17,5 +17,4 @@ public interface OrderMapper {
     Order selectById(Integer id);
 
     List<Order> selectAll(Order order);
-
 }

@@ -19,16 +19,14 @@
     <insert id="insert" parameterType="com.example.entity.Order" useGeneratedKeys="true">
         insert into `order`
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="title != null">title,</if>
-            <if test="content != null">content,</if>
-            <if test="time != null">time,</if>
+            <if test="description != null">description,</if>
+            <if test="cost != null">cost,</if>
+            <if test="goodsDetail != null">goods_detail,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="title != null">#{title},</if>
-            <if test="content != null">#{content},</if>
-            <if test="time != null">#{time},</if>
+            <if test="description != null">#{description},</if>
+            <if test="cost != null">#{cost},</if>
+            <if test="goodsDetail != null">#{goodsDetail},</if>
         </trim>
     </insert>
 

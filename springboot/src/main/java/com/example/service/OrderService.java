@@ -1,6 +1,8 @@
 package com.example.service;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
+
 import com.example.additive.NoAdditive;
 import com.example.beverage.NoBeverage;
 import com.example.beverage.Beverage;
@@ -16,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 import com.example.entity.OrderRequest;
-import com.example.entity.OrderAdditive;
 
 import java.util.List;
 import java.util.Base64.Decoder;
@@ -38,6 +39,7 @@ public class OrderService {
     private AdditiveFactory additiveFactory;
 
     public void add(Order order) {
+        order.setGoodsDetail(JSONUtil.toJsonStr(order.getGoods()));
         orderMapper.insert(order);
     }
 
@@ -110,6 +112,7 @@ public class OrderService {
             }
         }
 
+        // order.setId(orderMapper.countAll() + 1);
         order.setDescription(description);
         order.setCost(cost);
 

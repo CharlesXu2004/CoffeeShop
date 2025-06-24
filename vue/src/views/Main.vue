@@ -10,7 +10,7 @@
             <template #header>
                 <div class="card-header">
                     <img src="@/assets/imgs/drink.png" alt="" style="width: 50px; height: 50px; position: relative;">
-                    <span class="header-text">售货小店</span>
+                    <span class="header-text">售货机</span>
                 </div>
             </template>
             
@@ -91,7 +91,7 @@
                         <span class="value description">{{ data.order.description }}</span>
                     </div>
 
-                    <el-table :data="data.order.goods" style="width: 100%" border show-summary :summary-method="getSummaries">
+                    <el-table :data="data.order.goods" style="width: 100%" show-summary :summary-method="getSummaries">
                         <el-table-column label="商品名称" align="center">
                             <template #default="scope">
                                 <span class="item-name">{{ scope.row.name }}</span>
@@ -158,6 +158,13 @@
         request.post('/order/processOrder', data.json).then(res => {
             if (res.code === '200') {
                 data.order = res.data
+                if (data.order.cost > 0) {
+                    saveOrder(res.data)
+                }
+                else {
+                    data.order.goods = null
+                    ElMessage.warning('非法订单，请检查饮品和配料')
+                }
             } 
             else {
                 ElMessage.error(res.msg)
@@ -166,6 +173,17 @@
 
         // 恢复最后一个配料行
         data.json.additives.push(lastAdditive)
+    }
+
+    const saveOrder = (order) => {
+        request.post('/order/add', order).then(res => {
+            if (res.code === '200') {
+                ElMessage.success('订单已保存')
+            } 
+            else {
+                ElMessage.error(res.msg)
+            }
+        })
     }
 
     // 重置表单

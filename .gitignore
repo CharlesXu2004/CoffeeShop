@@ -1,3 +1,4 @@
 .vscode/
 springboot/target/
 vue/node_modules/
+.spring-api-helper.json

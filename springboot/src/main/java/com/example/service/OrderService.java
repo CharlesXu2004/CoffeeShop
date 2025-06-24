@@ -71,6 +71,7 @@ public class OrderService {
 
     public Order processOrder(OrderRequest orderRequest) {
 
+        Order order = new Order();
         String description;
         Double cost;
 
@@ -82,7 +83,16 @@ public class OrderService {
 
         if (!(beverage instanceof NoBeverage)){
 
+            OrderAdditive good = new OrderAdditive();
+            good.setName(beverageName);
+            good.setNum(1);
+            good.setPrice(cost);
+            order.getGoods().add(good);
+
             for (OrderAdditive additive : orderRequest.getAdditives()) {
+
+                Double tempCost = cost;
+
                 String additiveName = additive.getName();
                 Integer additiveNum = additive.getNum();
 
@@ -91,11 +101,15 @@ public class OrderService {
                 cost = beverage.getCost();
 
                 if (beverage instanceof NoAdditive) break;
-            }
 
+                good = new OrderAdditive();
+                good.setName(additiveName);
+                good.setNum(additiveNum);
+                good.setPrice((cost - tempCost) / additiveNum);
+                order.getGoods().add(good);
+            }
         }
 
-        Order order = new Order();
         order.setDescription(description);
         order.setCost(cost);
 

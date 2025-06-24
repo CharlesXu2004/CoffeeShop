@@ -7,4 +7,5 @@ import lombok.Data;
 public class OrderAdditive {
     private String name;
     private Integer num;
+    private Double price;
 }

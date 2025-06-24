@@ -144,11 +144,19 @@
     box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
 }
 
-.divider-custom {
+.horizontal-divider {
     height: 2px;
     background: linear-gradient(90deg, transparent, #667eea, #764ba2, #667eea, transparent);
     margin: 10px 10px;
     border-radius: 1px;
+}
+
+.vertical-divider {
+    width: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, #764ba2, #667eea, transparent);
+    border-radius: 1px;
+    margin: 10px 10px;
+    flex-shrink: 0;
 }
 
 .order-result {
@@ -233,6 +241,8 @@
     width: 75%;
     /* center */
     margin: 0 auto;
+    margin-top: 20px;
+    justify-content: center;
     /* border: 1px solid rgba(255, 193, 7, 0.3); */
 }
 

@@ -6,6 +6,7 @@
         </div>
         
         <el-card class="order-card">
+            
             <template #header>
                 <div class="card-header">
                     <img src="@/assets/imgs/drink.png" alt="" style="width: 50px; height: 50px; position: relative;">
@@ -76,21 +77,46 @@
                 
             </el-form>
             
-            <div class="divider-custom"></div>
+            <div class="horizontal-divider"></div>
             
             <div class="order-result" v-if="data.order">
                 <div class="result-header">
-                    <span class="result-icon">🎉</span>
+                    <span class="result-icon">📋</span>
                     <span class="result-title">订单详情</span>
                 </div>
                 <div class="result-content">
+
                     <div class="result-item">
                         <span class="label">您所点的是：</span>
                         <span class="value description">{{ data.order.description }}</span>
                     </div>
-                    <div class="result-item price-item">
+
+                    <el-table :data="data.order.goods" style="width: 100%" border show-summary :summary-method="getSummaries">
+                        <el-table-column label="商品名称" align="center">
+                            <template #default="scope">
+                                <span class="item-name">{{ scope.row.name }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="单价" align="center">
+                            <template #default="scope">
+                                <span class="price-text">¥ {{ scope.row.price }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="数量" align="center">
+                            <template #default="scope">
+                                <span class="quantity-text">{{ scope.row.num }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="小计" align="center">
+                            <template #default="scope">
+                                <span class="subtotal-text">¥ {{ scope.row.price * scope.row.num }}</span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <div class="result-item price-item" >
                         <span class="label">总计价格是：</span>
-                        <span class="value price">¥{{ data.order.cost }}</span>
+                        <span class="value price">¥ {{ data.order.cost }}</span>
                     </div>
                 </div>
             </div>
@@ -111,7 +137,7 @@
             "beverageName": '',
             "additives": [
                 { "name": '', "num": null }
-            ],
+            ]
         },
         order: null
     })
@@ -148,7 +174,7 @@
             "beverageName": '',
             "additives": [
                 { "name": '', "num": null }
-            ],
+            ]
         }
         data.order = null
     }
@@ -196,6 +222,26 @@
 
     const removeAdditive = (index) => {
         data.json.additives.splice(index, 1)
+    }
+
+    // 自定义合计行
+    const getSummaries = (param) => {
+        const { columns } = param
+        const sums = []
+        
+        columns.forEach((column, index) => {
+            if (index === 0) {
+                sums[index] = '总计'
+            } 
+            else if (index === 3) {
+                sums[index] = `¥ ${data.order.cost}`
+            }
+            else {
+                sums[index] = '-'
+            }
+        })
+        
+        return sums
     }
 
 </script>

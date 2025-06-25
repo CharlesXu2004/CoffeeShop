@@ -7,6 +7,7 @@
         select * from `order`
         <where>
             <if test="cost != null"> and cost != 0</if>
+            <if test="description != null"> and description like concat('%', #{description}, '%')</if>
         </where>
         order by id asc
     </select>

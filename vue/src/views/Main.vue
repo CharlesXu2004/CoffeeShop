@@ -167,6 +167,40 @@
                             <span class="label">总计价格是：</span>
                             <span class="value price">¥ {{ data.order.cost }}</span>
                         </div>
+
+                        <div style="display: flex; justify-content: center; margin-top: 20px;">
+
+                            <el-button type="primary" @click="payment" class="submit-btn">
+                                <span> 💳 立即支付 </span>
+                            </el-button>
+
+                        </div>
+
+                        <el-dialog v-model="data.payVisible" width="50%" :close-on-click-modal="false" destroy-on-close>
+                            <div style="text-align: center; padding: 20px;">
+
+                                <img src="@/assets/imgs/zfb.png" alt="支付二维码" style="width: 100%;"/>
+
+                                <div style="font-size: 18px; font-weight: bold; margin-bottom: 20px;">
+                                    支付金额：<span style="color: #ff4d4f;">¥ {{ data.order.cost }}</span>
+                                </div>
+
+                                <el-button 
+                                    type="primary" 
+                                    @click="confirmPayment"
+                                >
+                                    已支付
+                                </el-button>
+                                <el-button 
+                                    type="default" 
+                                    @click="data.payVisible = false" 
+                                    style="margin-left: 20px;"
+                                >
+                                    取消
+                                </el-button>
+                            </div>
+                        </el-dialog>
+
                     </div>
                 </div>
             </el-card>
@@ -212,6 +246,12 @@
 
             <div style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: center; ">
                 <span class="header-text">我的订单</span>
+            </div>
+
+            <div style="margin-bottom: 15px; display: flex; justify-content: center;" >
+                <el-input v-model="data.searchDescription" prefix-icon="Search" style="width: 240px; margin-right: 10px" placeholder="模糊查询"></el-input>
+                <el-button type="info" plain @click="loadHistory(data.historyPageInfo.pageNum)">查询</el-button>
+                <el-button type="warning" plain style="margin: 0 10px" @click="resetHistory">重置</el-button>
             </div>
 
             <el-table :data="data.historyData" style="width: 100%">
@@ -266,7 +306,9 @@
             pageSize: 10,
             total: 0
         },
-        searchData: null
+        searchData: null,
+        payVisible: false,
+        searchDescription: null
     })
 
 
@@ -285,7 +327,8 @@
         request.get('/order/selectPage', {
             params: {
                 pageNum: pageNum,
-                pageSize: data.historyPageInfo.pageSize
+                pageSize: data.historyPageInfo.pageSize,
+                description: data.searchDescription
             }
         }).then(res => {
             if (res.code === '200') {
@@ -340,6 +383,11 @@
         })
     }
 
+    const resetHistory = () => {
+        data.searchDescription = null
+        loadHistory()
+    }
+
     // 重置表单
     const resetForm = () => {
         data.json = {
@@ -349,6 +397,16 @@
             ]
         }
         data.order = null
+    }
+
+    // 支付
+    const payment = () => {
+        if (data.order.cost>0){
+            data.payVisible = true
+        }
+        else {
+            ElMessage.error('非法订单，请检查饮品和配料')
+        }
     }
 
     const handleAdditiveInput = (index) => {

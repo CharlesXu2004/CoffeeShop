@@ -35,12 +35,7 @@
                         </div>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <!-- <el-dropdown-item >我的地址</el-dropdown-item> -->
-                                <!-- <el-dropdown-item >我的收藏</el-dropdown-item> -->
-                                <!-- <el-dropdown-item >充值记录</el-dropdown-item> -->
                                 <el-dropdown-item @click="comingSoon">个人信息</el-dropdown-item>
-                                <!-- <el-dropdown-item >修改密码</el-dropdown-item> -->
-                                <!-- <el-dropdown-item >退出登录</el-dropdown-item> -->
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -360,7 +355,7 @@
                 }
                 else {
                     data.order.goods = null
-                    ElMessage.warning('非法订单，请检查饮品和配料')
+                    ElMessage.error('非法订单，请检查饮品和配料')
                 }
             } 
             else {

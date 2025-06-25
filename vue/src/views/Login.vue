@@ -60,7 +60,6 @@
         if(!data.adminVisible) {
             // 如果是点餐模式，则直接跳转到点餐页面
             router.push('/main')
-            // router.push('/front/order')
             return;
         }
         ElMessage.warning('暂未开放');
@@ -68,7 +67,6 @@
 
     const handleAdmin = () => {
         data.adminVisible = !data.adminVisible;
-        // console.log(data.dialogVisible);
     }
 
 </script>

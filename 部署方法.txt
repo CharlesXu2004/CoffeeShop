@@ -1,0 +1,17 @@
+（1）配置依赖
+
+    配置 maven、java、nodejs、mysql 依赖
+
+（2）创建数据库表
+
+    可以使用该文件夹下的 dev.sql 导入部分数据
+
+    请在 ./springboot/src/main/resources/application.yml 中配置您的用户、密码和对应数据库名
+
+（3）运行后端
+
+    使用 springboot 启动 ./springboot/src/main/java/com/example/SpringbootApplication.java
+
+（4）运行前端
+
+    在 vue 目录下 npm run dev
